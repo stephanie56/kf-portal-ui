@@ -112,6 +112,7 @@ class Component extends React.Component<any, any> {
   };
   handleJWT = async jwt => {
     const props = this.props;
+    const { onFinish } = props;
     const data = jwtDecode(jwt);
     const user = data.context.user;
     const egoId = data.sub;
@@ -122,10 +123,12 @@ class Component extends React.Component<any, any> {
       ...(existingProfile || newProfile),
       email: user.email,
     });
-
-    if (Object.keys(newProfile).length > 0) {
-      this.props.history.push('/select-role');
+    if (onFinish) {
+      onFinish();
     }
+    //if (Object.keys(newProfile).length > 0) {
+    //this.props.history.push('/select-role');
+    //}
   };
   handleSecurityError() {
     this.setState({

@@ -37,6 +37,8 @@ const enhance = compose(
       if (!values.lastName || values.lastName.length === 0) {
         errors.lastName = 'Last name is required';
       }
+      const { onValidateFinish } = props;
+      onValidateFinish && onValidateFinish(errors);
       return errors;
     },
     handleSubmit: async (
@@ -65,12 +67,12 @@ const enhance = compose(
       }).then(
         async profile => {
           await setUser({ ...profile, email });
-          if (onFinish) {
-            onFinish();
-          }
-          if (redirectPath !== '') {
-            history.push(redirectPath);
-          }
+          //if (onFinish) {
+          //onFinish();
+          //}
+          //if (redirectPath !== '') {
+          //history.push(redirectPath);
+          //}
         },
         errors => setSubmitting(false),
       );
@@ -93,18 +95,17 @@ const SelectRoleForm = ({
 }) => {
   return (
     <div>
-      <h2>Select your role</h2>
       <span>Percent Filled: {percentageFilled}</span>
       <form onSubmit={handleSubmit}>
         <label>
           First name:
-          <Field name="firstName" placeholder="First Name" />
+          <Field name="firstName" placeholder="First Name" onBlur={submitForm} />
         </label>
         <br />
         {touched.firstName && errors.firstName && <div>{errors.firstName}</div>}
         <label>
           Last name:
-          <Field name="lastName" placeholder="Last Name" />
+          <Field name="lastName" placeholder="Last Name" onBlur={submitForm} />
         </label>
         <br />
         {touched.lastName && errors.lastName && <div>{errors.lastName}</div>}
@@ -115,7 +116,7 @@ const SelectRoleForm = ({
         <br />
         <label>
           Roles:
-          <Field component="select" name="roles">
+          <Field component="select" name="roles" onBlur={submitForm}>
             <option value="" disabled={true}>
               Please select a role
             </option>
@@ -128,19 +129,6 @@ const SelectRoleForm = ({
         </label>
         <br />
         {touched.roles && errors.roles && <div>{errors.roles}</div>}
-
-        <button type="submit" disabled={isSubmitting}>
-          Save my Kids First account and fill in my user profile
-        </button>
-        <br />
-        <button
-          onClick={() => {
-            setRedirectPath('/files', submitForm);
-          }}
-          disabled={isSubmitting}
-        >
-          Save my Kids First account and browse files
-        </button>
       </form>
     </div>
   );

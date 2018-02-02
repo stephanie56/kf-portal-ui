@@ -10,7 +10,8 @@ import UserProfile from 'components/UserProfile';
 import FileRepo from 'components/FileRepo';
 import AuthRedirect from 'components/AuthRedirect';
 import Header from 'components/Header';
-import Wizard from 'uikit/Wizard';
+
+import Join from 'pageContents/Join';
 
 const enhance = compose(injectState);
 
@@ -32,34 +33,6 @@ const forceSelectRole = (Component, loggedInUser) => {
     </div>
   );
 };
-
-const JoinContent = () => (
-  <div>
-    Join Kids First
-    <Wizard
-      steps={[
-        {
-          title: 'Connect',
-          Component: (
-            <div>
-              <p>Select a way to connect to the Kids First Data Resource Portal</p>
-              Don’t worry, the information you provide Kids First will not be shared with any of
-              these providers.
-            </div>
-          ),
-        },
-        {
-          title: 'Basic Info',
-          Component: <div>A bit about you</div>,
-        },
-        {
-          title: 'Consent',
-          Component: <div>Read and consent to our terms and conditions</div>,
-        },
-      ]}
-    />
-  </div>
-);
 
 const render = ({ editing, setEditing, state, effects }) => {
   const { loggedInUser } = state;
@@ -89,7 +62,7 @@ const render = ({ editing, setEditing, state, effects }) => {
               return <Redirect to="/" />;
             }}
           />
-          <Route path="/join" exact={true} component={JoinContent} />
+          <Route path="/join" exact={true} component={Join} />
           <Route exact path="/" render={() => forceSelectRole(LandingContent, loggedInUser)} />
         </Switch>
       </div>
