@@ -2,24 +2,24 @@ import React from 'react';
 import { injectState } from 'freactal';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
-import { css } from 'react-emotion';
+import styled, { css } from 'react-emotion';
+import { withTheme } from 'emotion-theming';
 
 import { get } from 'lodash';
 import Wizard from 'uikit/Wizard';
 import Login from 'components/Login';
 import SelectRoleForm from 'components/forms/SelectRoleForm';
 import { updateProfile } from 'services/profiles';
-import Card from 'uikit/Card';
 
 const Consent = compose(injectState)(({ state: { loggedInUser }, effects: { setUser } }) => (
   <div>
     <h2>Read and consent to our terms and conditions</h2>
     <textarea
-      style={{
-        width: '715px',
-        minHeight: '340px',
-        resize: 'none',
-      }}
+      className={css`
+        width: 715px;
+        min-height: 250px;
+        resize: none;
+      `}
       value="Lollipop halvah cotton candy marshmallow gingerbread jelly beans topping. Fruitcake
             sugar plum tiramisu pie. Sugar plum sweet roll cake chocolate bar lollipop jelly
             beans. Jelly jelly beans icing macaroon tart jujubes lemon drops marzipan. Liquorice
@@ -53,46 +53,62 @@ const Consent = compose(injectState)(({ state: { loggedInUser }, effects: { setU
   </div>
 ));
 
-const JoinContent = compose(withRouter)(({ history }) => (
+const ButtonsDiv = styled('div')`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  border-top: solid 1px ${props => props.theme.greyScale4};
+  margin-top: 20px;
+  padding-top: 20px;
+`;
+
+const JoinContent = compose(withRouter, withTheme)(({ history, theme }) => (
   <div
     className={css`
       width: 80%;
       margin: auto;
     `}
   >
-    <h2
-      className={css`
-        text-align: center;
-        font-family: Montserrat;
-        color: #2b388f;
-      `}
-    >
-      Join Kids First
-    </h2>
-    <Card>
+    <h2 className={theme.h2}>Join Kids First</h2>
+    <div className={theme.card}>
       <Wizard
         steps={[
           {
             title: 'Connect',
             render: ({ nextStep }) => (
               <div>
-                <p>Select a way to connect to the Kids First Data Resource Portal</p>
-                Don’t worry, the information you provide Kids First will not be shared with any of
-                these providers.
+                <h3 className={theme.h3}>
+                  Select a way to connect to the Kids First Data Resource Portal
+                </h3>
+                <p>
+                  Don’t worry, the information you provide Kids First will not be shared with any of
+                  these providers.
+                </p>
                 <Login shouldNotRedirect={true} onFinish={nextStep} />
               </div>
             ),
+            renderButtons: () => <div />,
             canGoBack: false,
           },
           {
             title: 'Basic Info',
             render: ({ disableNextStep }) => (
               <div>
-                <h2>A bit about you</h2>
+                <h3 className={theme.h3}>A bit about you</h3>
                 <SelectRoleForm
                   onValidateFinish={errors => disableNextStep(!!Object.keys(errors).length)}
                 />
               </div>
+            ),
+            renderButtons: ({ nextStep, prevStep, nextDisabled, prevDisabled }) => (
+              <ButtonsDiv>
+                <button className={theme.wizardButton} onClick={prevStep} disabled={prevDisabled}>
+                  Back
+                </button>
+                <button className={theme.wizardButton} onClick={nextStep} disabled={nextDisabled}>
+                  Save
+                </button>
+              </ButtonsDiv>
             ),
             canGoBack: true,
           },
@@ -104,11 +120,26 @@ const JoinContent = compose(withRouter)(({ history }) => (
                 Done
               </button>
             ),
+            displayButtons: true,
+            renderButtons: ({ nextStep, prevStep, nextDisabled, prevDisabled }) => (
+              <ButtonsDiv>
+                <button className={theme.wizardButton} onClick={prevStep} disabled={prevDisabled}>
+                  Back
+                </button>
+                <button
+                  className={theme.wizardButton}
+                  onClick={() => history.push('/files')}
+                  disabled={nextDisabled}
+                >
+                  Done
+                </button>
+              </ButtonsDiv>
+            ),
             canGoBack: false,
           },
         ]}
       />
-    </Card>
+    </div>
   </div>
 ));
 export default JoinContent;

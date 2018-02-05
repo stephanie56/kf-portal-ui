@@ -2,22 +2,78 @@
 import React from 'react';
 import { injectState } from 'freactal';
 import { compose, withState, withPropsOnChange, withHandlers } from 'recompose';
+import { css } from 'react-emotion';
+import { withTheme } from 'emotion-theming';
 
-const WizardProgress = ({ index, steps, setIndex }) => (
+const WizardProgress = compose(withTheme)(({ index, steps, setIndex, theme }) => (
   <div>
-    {steps.map(({ title }, i) => (
-      <div
-        onClick={() => i < index && (steps[i] || { canGoBack: false }).canGoBack && setIndex(i)}
-        key={title}
-      >
-        <div style={i === index ? { color: 'red' } : {}}>{i}</div> {title}
-      </div>
-    ))}
+    <div
+      className={css`
+        display: flex;
+        flex-direction: row;
+      `}
+    >
+      {steps
+        .map((step, i) => ({
+          ...step,
+          status: i === index ? 'active' : (i === steps.length - 1 && 'last') || 'inactive',
+        }))
+        .map(({ title, status }, i) => (
+          <div
+            onClick={() => i < index && (steps[i] || { canGoBack: false }).canGoBack && setIndex(i)}
+            key={title}
+            className={css`
+              padding: 0 140px 0 0;
+              border-top: 6px solid
+                ${i === steps.length - 1
+                  ? 'transparent'
+                  : (i <= index && theme.active) || theme.inactive};
+            `}
+          >
+            <div
+              className={css`
+                color: white;
+                position: relative;
+                top: -12px;
+                padding: 4px 7px;
+                border-radius: 10px;
+                font-size: 10px;
+                font-weight: bold;
+                display: inline-block;
+                background-color: ${i <= index ? theme.active : theme.inactive};
+              `}
+            >
+              {i}
+            </div>
+          </div>
+        ))}
+    </div>
+
+    <div
+      className={css`
+        display: flex;
+        flex-direction: row;
+        margin-left: -70px;
+      `}
+    >
+      {steps.map(({ title }, i) => (
+        <div
+          key={title}
+          className={css`
+            width: 160px;
+            text-align: center;
+          `}
+        >
+          {title}
+        </div>
+      ))}
+    </div>
   </div>
-);
+));
 
 export default compose(
   injectState,
+  withTheme,
   withState('index', 'setIndex', 0),
   withState('nextDisabled', 'setNextDisabled', false),
   withHandlers({
@@ -39,6 +95,7 @@ export default compose(
     setIndex,
     nextDisabled,
     setNextDisabled,
+    theme,
   }: {
     steps: Array<{
       title: string,
@@ -46,6 +103,7 @@ export default compose(
       render?: Function,
       canGoBack: boolean,
       renderNext?: Function,
+      displayButtons: boolean,
     }>,
     state: string,
     index: number,
@@ -56,23 +114,27 @@ export default compose(
     setIndex: Function,
     nextDisabled: boolean,
     setNextDisabled: Function,
+    displayButtons: boolean,
   }) => (
     <div>
-      <WizardProgress setIndex={setIndex} index={index} steps={steps} />
-      <h2>{currentStep.title}</h2>
+      <div
+        className={css`
+          display: flex;
+          justify-content: center;
+        `}
+      >
+        <WizardProgress setIndex={setIndex} index={index} steps={steps} />
+      </div>
       {currentStep.render
         ? currentStep.render({ nextStep, prevStep, disableNextStep: setNextDisabled })
         : currentStep.Component}
-      <button onClick={prevStep} disabled={index - 1 < 0 || !steps[index - 1].canGoBack}>
-        Back
-      </button>
-      {currentStep.renderNext ? (
-        currentStep.renderNext({ nextStep, nextDisabled })
-      ) : (
-        <button onClick={nextStep} disabled={nextDisabled}>
-          Next
-        </button>
-      )}
+      {currentStep.renderButtons &&
+        currentStep.renderButtons({
+          nextStep,
+          prevStep,
+          nextDisabled,
+          prevDisabled: index - 1 < 0 || !steps[index - 1].canGoBack,
+        })}
     </div>
   ),
 );
