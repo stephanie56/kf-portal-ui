@@ -2,12 +2,14 @@ import React from 'react';
 import { injectState } from 'freactal';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
+import { css } from 'react-emotion';
 
 import { get } from 'lodash';
 import Wizard from 'uikit/Wizard';
 import Login from 'components/Login';
 import SelectRoleForm from 'components/forms/SelectRoleForm';
 import { updateProfile } from 'services/profiles';
+import Card from 'uikit/Card';
 
 const Consent = compose(injectState)(({ state: { loggedInUser }, effects: { setUser } }) => (
   <div>
@@ -52,46 +54,61 @@ const Consent = compose(injectState)(({ state: { loggedInUser }, effects: { setU
 ));
 
 const JoinContent = compose(withRouter)(({ history }) => (
-  <div>
-    Join Kids First
-    <Wizard
-      steps={[
-        {
-          title: 'Connect',
-          render: ({ nextStep }) => (
-            <div>
-              <p>Select a way to connect to the Kids First Data Resource Portal</p>
-              Don’t worry, the information you provide Kids First will not be shared with any of
-              these providers.
-              <Login shouldNotRedirect={true} onFinish={nextStep} />
-            </div>
-          ),
-          canGoBack: false,
-        },
-        {
-          title: 'Basic Info',
-          render: ({ disableNextStep }) => (
-            <div>
-              <h2>A bit about you</h2>
-              <SelectRoleForm
-                onValidateFinish={errors => disableNextStep(!!Object.keys(errors).length)}
-              />
-            </div>
-          ),
-          canGoBack: true,
-        },
-        {
-          title: 'Consent',
-          Component: <Consent />,
-          renderNext: ({ nextStep, nextDisabled }) => (
-            <button onClick={() => history.push('/files')} disabled={nextDisabled}>
-              Done
-            </button>
-          ),
-          canGoBack: false,
-        },
-      ]}
-    />
+  <div
+    className={css`
+      width: 80%;
+      margin: auto;
+    `}
+  >
+    <h2
+      className={css`
+        text-align: center;
+        font-family: Montserrat;
+        color: #2b388f;
+      `}
+    >
+      Join Kids First
+    </h2>
+    <Card>
+      <Wizard
+        steps={[
+          {
+            title: 'Connect',
+            render: ({ nextStep }) => (
+              <div>
+                <p>Select a way to connect to the Kids First Data Resource Portal</p>
+                Don’t worry, the information you provide Kids First will not be shared with any of
+                these providers.
+                <Login shouldNotRedirect={true} onFinish={nextStep} />
+              </div>
+            ),
+            canGoBack: false,
+          },
+          {
+            title: 'Basic Info',
+            render: ({ disableNextStep }) => (
+              <div>
+                <h2>A bit about you</h2>
+                <SelectRoleForm
+                  onValidateFinish={errors => disableNextStep(!!Object.keys(errors).length)}
+                />
+              </div>
+            ),
+            canGoBack: true,
+          },
+          {
+            title: 'Consent',
+            Component: <Consent />,
+            renderNext: ({ nextStep, nextDisabled }) => (
+              <button onClick={() => history.push('/files')} disabled={nextDisabled}>
+                Done
+              </button>
+            ),
+            canGoBack: false,
+          },
+        ]}
+      />
+    </Card>
   </div>
 ));
 export default JoinContent;

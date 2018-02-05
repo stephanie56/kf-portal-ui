@@ -4,6 +4,7 @@ import { injectState } from 'freactal';
 import './App.css';
 import { provideLoggedInUser } from 'stateProviders';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { css } from 'react-emotion';
 
 import SelectRoleForm from 'components/forms/SelectRoleForm';
 import UserProfile from 'components/UserProfile';
@@ -12,6 +13,7 @@ import AuthRedirect from 'components/AuthRedirect';
 import Header from 'components/Header';
 
 import Join from 'pageContents/Join';
+import scienceBgPath from 'theme/images/background-science.jpg';
 
 const enhance = compose(injectState);
 
@@ -62,7 +64,27 @@ const render = ({ editing, setEditing, state, effects }) => {
               return <Redirect to="/" />;
             }}
           />
-          <Route path="/join" exact={true} component={Join} />
+          <Route
+            path="/join"
+            exact={true}
+            render={() => (
+              <div
+                className={css`
+                  background-image: url(${scienceBgPath});
+                  background-repeat: repeat;
+                  height: 100%;
+                  width: 100%;
+                  display: flex;
+                  flex-direction: column;
+                `}
+              >
+                <Header />
+                <div>
+                  <Join />
+                </div>
+              </div>
+            )}
+          />
           <Route exact path="/" render={() => forceSelectRole(LandingContent, loggedInUser)} />
         </Switch>
       </div>

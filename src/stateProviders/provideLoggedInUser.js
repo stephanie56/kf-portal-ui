@@ -23,4 +23,8 @@ export default provideState({
       return { ...state, loggedInUserToken: token };
     },
   },
+  computed: {
+    hasRoleSelected: ({ loggedInUser }) =>
+      !loggedInUser || (loggedInUser.roles && loggedInUser.roles[0]),
+  },
 });
