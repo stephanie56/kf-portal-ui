@@ -4,6 +4,8 @@ import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import styled, { css } from 'react-emotion';
 import { withTheme } from 'emotion-theming';
+import LeftIcon from 'react-icons/lib/fa/angle-left';
+import RightIcon from 'react-icons/lib/fa/angle-right';
 
 import { get } from 'lodash';
 import Wizard from 'uikit/Wizard';
@@ -73,41 +75,52 @@ const JoinContent = compose(withRouter, withTheme)(({ history, theme }) => (
     <div className={theme.card}>
       <Wizard
         steps={[
-          {
-            title: 'Connect',
-            render: ({ nextStep }) => (
-              <div>
-                <h3 className={theme.h3}>
-                  Select a way to connect to the Kids First Data Resource Portal
-                </h3>
-                <p>
-                  Don’t worry, the information you provide Kids First will not be shared with any of
-                  these providers.
-                </p>
-                <Login shouldNotRedirect={true} onFinish={nextStep} />
-              </div>
-            ),
-            renderButtons: () => <div />,
-            canGoBack: false,
-          },
+          //{
+          //title: 'Connect',
+          //render: ({ nextStep }) => (
+          //<div>
+          //<h3 className={theme.h3}>
+          //Select a way to connect to the Kids First Data Resource Portal
+          //</h3>
+          //<p>
+          //Don’t worry, the information you provide Kids First will not be shared with any of
+          //these providers.
+          //</p>
+          //<Login shouldNotRedirect={true} onFinish={nextStep} />
+          //</div>
+          //),
+          //renderButtons: () => <div />,
+          //canGoBack: false,
+          //},
           {
             title: 'Basic Info',
             render: ({ disableNextStep }) => (
               <div>
                 <h3 className={theme.h3}>A bit about you</h3>
+                <p>
+                  A bit about you Please provide a bit about yourself to help us provide you with a
+                  personalized experience.
+                </p>
                 <SelectRoleForm
                   onValidateFinish={errors => disableNextStep(!!Object.keys(errors).length)}
                 />
               </div>
             ),
             renderButtons: ({ nextStep, prevStep, nextDisabled, prevDisabled }) => (
-              <ButtonsDiv>
-                <button className={theme.wizardButton} onClick={prevStep} disabled={prevDisabled}>
-                  Back
-                </button>
-                <button className={theme.wizardButton} onClick={nextStep} disabled={nextDisabled}>
-                  Save
-                </button>
+              <ButtonsDiv
+                className={css`
+                  justify-content: flex-end;
+                `}
+              >
+                <div>
+                  <button className={theme.wizardButton} onClick={() => history.push('/')}>
+                    Cancel
+                  </button>
+                  <button className={theme.wizardButton} onClick={nextStep} disabled={nextDisabled}>
+                    Save
+                    <RightIcon />
+                  </button>
+                </div>
               </ButtonsDiv>
             ),
             canGoBack: true,
@@ -124,15 +137,22 @@ const JoinContent = compose(withRouter, withTheme)(({ history, theme }) => (
             renderButtons: ({ nextStep, prevStep, nextDisabled, prevDisabled }) => (
               <ButtonsDiv>
                 <button className={theme.wizardButton} onClick={prevStep} disabled={prevDisabled}>
+                  <LeftIcon />
                   Back
                 </button>
-                <button
-                  className={theme.wizardButton}
-                  onClick={() => history.push('/files')}
-                  disabled={nextDisabled}
-                >
-                  Done
-                </button>
+                <div>
+                  <button className={theme.wizardButton} onClick={() => history.push('/')}>
+                    Cancel
+                  </button>
+                  <button
+                    className={theme.wizardButton}
+                    onClick={() => history.push('/files')}
+                    disabled={nextDisabled}
+                  >
+                    Finish
+                    <RightIcon />
+                  </button>
+                </div>
               </ButtonsDiv>
             ),
             canGoBack: false,

@@ -2,21 +2,31 @@ import React from 'react';
 import { injectState } from 'freactal';
 import { compose, withState } from 'recompose';
 import { withFormik, Field } from 'formik';
+import styled, { css } from 'react-emotion';
+import { withTheme } from 'emotion-theming';
 import { withRouter } from 'react-router-dom';
 
 import { ROLES } from 'common/constants';
 import { updateProfile } from 'services/profiles';
 
+const StyledLabel = styled('label')`
+  font-weight: 900;
+  width: 140px;
+`;
+
 const enhance = compose(
   withRouter,
+  withTheme,
   injectState,
   withState(
     'redirectPath',
     'setRedirectPath',
-    ({ state: { loggedInUser } }) => `/user/${loggedInUser.egoId}`,
+    ({ state: { loggedInUser } }) =>
+      `/user/${(loggedInUser || { firstName: '', lastName: '', email: '', roles: [] }).egoId}`,
   ),
   withFormik({
     mapPropsToValues: ({ state: { loggedInUser } }) => {
+      loggedInUser = { firstName: '', lastName: '', email: '', roles: [] };
       return {
         firstName: loggedInUser.firstName || '',
         lastName: loggedInUser.lastName || '',
@@ -81,6 +91,7 @@ const enhance = compose(
 );
 
 const SelectRoleForm = ({
+  theme,
   onFinish,
   errors,
   touched,
@@ -95,40 +106,67 @@ const SelectRoleForm = ({
 }) => {
   return (
     <div>
-      <span>Percent Filled: {percentageFilled}</span>
-      <form onSubmit={handleSubmit}>
-        <label>
-          First name:
-          <Field name="firstName" placeholder="First Name" onBlur={submitForm} />
-        </label>
-        <br />
-        {touched.firstName && errors.firstName && <div>{errors.firstName}</div>}
-        <label>
-          Last name:
-          <Field name="lastName" placeholder="Last Name" onBlur={submitForm} />
-        </label>
-        <br />
-        {touched.lastName && errors.lastName && <div>{errors.lastName}</div>}
-        <label>
-          Email:
-          <Field type="email" name="email" placeholder="Email" disabled="true" />
-        </label>
-        <br />
-        <label>
-          Roles:
-          <Field component="select" name="roles" onBlur={submitForm}>
-            <option value="" disabled={true}>
-              Please select a role
-            </option>
-            {ROLES.map(role => (
-              <option value={role} key={role}>
-                {role}
+      <form
+        onSubmit={handleSubmit}
+        className={css`
+          ${theme.column} height: 230px;
+          justify-content: space-around;
+        `}
+      >
+        <div className={theme.row}>
+          <StyledLabel>First name:</StyledLabel>
+          <div className={theme.column}>
+            <Field
+              className={theme.input}
+              name="firstName"
+              placeholder="First Name"
+              onBlur={submitForm}
+            />
+            {touched.firstName && errors.firstName && <div>{errors.firstName}</div>}
+          </div>
+        </div>
+        <div className={theme.row}>
+          <StyledLabel>Last name:</StyledLabel>
+          <div className={theme.column}>
+            <Field
+              className={theme.input}
+              name="lastName"
+              placeholder="Last Name"
+              onBlur={submitForm}
+            />
+            {touched.lastName && errors.lastName && <div>{errors.lastName}</div>}
+          </div>
+        </div>
+
+        <div className={theme.row}>
+          <StyledLabel>Email:</StyledLabel>
+          <div className={theme.column}>
+            <Field
+              className={theme.input}
+              type="email"
+              name="email"
+              placeholder="Email"
+              disabled="true"
+            />
+          </div>
+        </div>
+
+        <div className={theme.row}>
+          <StyledLabel>Roles:</StyledLabel>
+          <div className={theme.column}>
+            <Field component="select" name="roles" onBlur={submitForm}>
+              <option value="" disabled={true}>
+                Please select a role
               </option>
-            ))}
-          </Field>
-        </label>
-        <br />
-        {touched.roles && errors.roles && <div>{errors.roles}</div>}
+              {ROLES.map(role => (
+                <option value={role} key={role}>
+                  {role}
+                </option>
+              ))}
+            </Field>
+          </div>
+          {touched.roles && errors.roles && <div>{errors.roles}</div>}
+        </div>
       </form>
     </div>
   );

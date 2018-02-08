@@ -57,6 +57,7 @@ const render = ({ editing, setEditing, state, effects }) => {
               exact={true}
               render={() => forceSelectRole(UserProfile, loggedInUser)}
             />
+            <Route path="/test" exact={true} component={SelectRoleForm} />
             <Route
               path="/select-role"
               exact={true}

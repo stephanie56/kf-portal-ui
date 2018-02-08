@@ -53,6 +53,7 @@ const components = {
     padding: 6px 16px;
     font-family: montserrat;
     font-size: 14px;
+    font-weight: 800;
     line-height: 1.86;
     letter-spacing: 0.2px;
     margin: 0px 4px;
@@ -73,12 +74,33 @@ const components = {
   `,
   h2: css`
     text-align: center;
-    font-family: Montserrat;
+    font-family: 'Open Sans',
     color: ${colors.secondary};
   `,
   h3: css`
-    font-family: Montserrat;
+    font-family: 'Open Sans';
     color: ${colors.secondary};
+  `,
+  input: css`
+    width: 374px;
+    min-width: 0;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid ${colors.greyScale4};
+    border-radius: 10px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  },
+  `,
+  column: css`
+    display: flex;
+    flex-direction: column;
+  `,
+  row: css`
+    display: flex;
+    flex-direction: row;
   `,
 };
 
