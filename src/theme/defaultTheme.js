@@ -74,7 +74,7 @@ const components = {
   `,
   h2: css`
     text-align: center;
-    font-family: 'Open Sans',
+    font-family: 'Open Sans';
     color: ${colors.secondary};
   `,
   h3: css`

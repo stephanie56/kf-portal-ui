@@ -4,6 +4,7 @@ import { css } from 'react-emotion';
 
 import { compose } from 'recompose';
 import { injectState } from 'freactal';
+import { withTheme } from 'emotion-theming';
 
 import Login from 'components/Login';
 import LogoutButton from 'components/LogoutButton';
@@ -43,64 +44,81 @@ const navBar = css`
     }
   }
 `;
-const Header = ({ state: { loggedInUser } }) => {
+
+const Header = ({ state: { loggedInUser }, theme }) => {
   return (
     <div
       className={css`
-        display: flex;
-        justify-content: space-between;
+        background-image: linear-gradient(to bottom, #fff 50%, transparent);
       `}
     >
-      <ul className={navBar}>
-        <li>
-          <img
-            src={logoPath}
-            alt="Kids First Logo"
-            className={css`
-              width: 244px;
-              height: 90px;
-            `}
-          />
-        </li>
-        {!(loggedInUser || {}).hasRoleSelected && (
-          <li>
-            <Link to="/">
-              <HouseIcon /> Dashboard
-            </Link>
-          </li>
-        )}
-        {!(loggedInUser || {}).hasRoleSelected && (
-          <li>
-            <Link to="/files">
-              <DatabaseIcon /> File Repository
-            </Link>
-          </li>
-        )}
-      </ul>
-      <ul
+      <div
         className={css`
-          ${navBar};
-          justify-content: flex-end;
+          width: 100%;
+          height: 5px;
+          background-image: linear-gradient(to right, #90278e, #cc3399 35%, #be1e2d 66%, #f6921e);
+        `}
+      />
+      <div
+        className={css`
+          display: flex;
+          justify-content: space-between;
+          padding: 40px 40px 0 40px;
         `}
       >
-        {(loggedInUser || {}).hasRoleSelected && (
-          <li>
-            <Link to={`/user/${loggedInUser.egoId}`}>User Profile</Link>
-          </li>
-        )}
-        {!loggedInUser && (
-          <li>
-            <Login />
-          </li>
-        )}
-        {loggedInUser && (
-          <li>
-            <LogoutButton />
-          </li>
-        )}
-      </ul>
+        <div className={theme.row}>
+          <Link to="/">
+            <img
+              src={logoPath}
+              alt="Kids First Logo"
+              className={css`
+                width: 244px;
+                height: 100px;
+              `}
+            />
+          </Link>
+          <ul className={navBar}>
+            {!(loggedInUser || {}).hasRoleSelected && (
+              <li>
+                <Link to="/">
+                  <HouseIcon /> Dashboard
+                </Link>
+              </li>
+            )}
+            {!(loggedInUser || {}).hasRoleSelected && (
+              <li>
+                <Link to="/files">
+                  <DatabaseIcon /> File Repository
+                </Link>
+              </li>
+            )}
+          </ul>
+        </div>
+        <ul
+          className={css`
+            ${navBar};
+            justify-content: flex-end;
+          `}
+        >
+          {(loggedInUser || {}).hasRoleSelected && (
+            <li>
+              <Link to={`/user/${loggedInUser.egoId}`}>User Profile</Link>
+            </li>
+          )}
+          {!loggedInUser && (
+            <li>
+              <Login />
+            </li>
+          )}
+          {loggedInUser && (
+            <li>
+              <LogoutButton />
+            </li>
+          )}
+        </ul>
+      </div>
     </div>
   );
 };
 
-export default compose(injectState)(Header);
+export default compose(injectState, withTheme)(Header);
