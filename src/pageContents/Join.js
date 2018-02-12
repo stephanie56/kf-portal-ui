@@ -97,56 +97,56 @@ const JoinContent = compose(withRouter, withTheme)(({ history, theme }) => (
     <div className={theme.card}>
       <Wizard
         steps={[
-          //{
-          //title: 'Connect',
-          //render: ({ nextStep }) => (
-          //<div>
-          //<h3 className={theme.h3}>
-          //Select a way to connect to the Kids First Data Resource Portal
-          //</h3>
-          //<p>
-          //Don’t worry, the information you provide Kids First will not be shared with any of
-          //these providers.
-          //</p>
-          //<Login shouldNotRedirect={true} onFinish={nextStep} />
-          //</div>
-          //),
-          //renderButtons: () => <div />,
-          //canGoBack: false,
-          //},
-          //{
-          //title: 'Basic Info',
-          //render: ({ disableNextStep }) => (
-          //<div>
-          //<h3 className={theme.h3}>A bit about you</h3>
-          //<p>
-          //Please provide a bit about yourself to help us provide you with a personalized
-          //experience.
-          //</p>
-          //<SelectRoleForm
-          //onValidateFinish={errors => disableNextStep(!!Object.keys(errors).length)}
-          ///>
-          //</div>
-          //),
-          //renderButtons: ({ nextStep, prevStep, nextDisabled, prevDisabled }) => (
-          //<ButtonsDiv
-          //className={css`
-          //justify-content: flex-end;
-          //`}
-          //>
-          //<div>
-          //<button className={theme.wizardButton} onClick={() => history.push('/')}>
-          //Cancel
-          //</button>
-          //<button className={theme.wizardButton} onClick={nextStep} disabled={nextDisabled}>
-          //Save
-          //<RightIcon />
-          //</button>
-          //</div>
-          //</ButtonsDiv>
-          //),
-          //canGoBack: true,
-          //},
+          {
+            title: 'Connect',
+            render: ({ nextStep }) => (
+              <div>
+                <h3 className={theme.h3}>
+                  Select a way to connect to the Kids First Data Resource Portal
+                </h3>
+                <p>
+                  Don’t worry, the information you provide Kids First will not be shared with any of
+                  these providers.
+                </p>
+                <Login shouldNotRedirect={true} onFinish={nextStep} />
+              </div>
+            ),
+            renderButtons: () => <div />,
+            canGoBack: false,
+          },
+          {
+            title: 'Basic Info',
+            render: ({ disableNextStep }) => (
+              <div>
+                <h3 className={theme.h3}>A bit about you</h3>
+                <p>
+                  Please provide a bit about yourself to help us provide you with a personalized
+                  experience.
+                </p>
+                <SelectRoleForm
+                  onValidateFinish={errors => disableNextStep(!!Object.keys(errors).length)}
+                />
+              </div>
+            ),
+            renderButtons: ({ nextStep, prevStep, nextDisabled, prevDisabled }) => (
+              <ButtonsDiv
+                className={css`
+                  justify-content: flex-end;
+                `}
+              >
+                <div>
+                  <button className={theme.wizardButton} onClick={() => history.push('/')}>
+                    Cancel
+                  </button>
+                  <button className={theme.wizardButton} onClick={nextStep} disabled={nextDisabled}>
+                    Save
+                    <RightIcon />
+                  </button>
+                </div>
+              </ButtonsDiv>
+            ),
+            canGoBack: true,
+          },
           {
             title: 'Consent',
             Component: <Consent />,

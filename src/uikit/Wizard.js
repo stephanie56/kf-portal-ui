@@ -23,11 +23,8 @@ const WizardProgress = compose(withTheme)(({ index, steps, setIndex, theme }) =>
             onClick={() => i < index && (steps[i] || { canGoBack: false }).canGoBack && setIndex(i)}
             key={title}
             className={css`
-              padding: 0 140px 0 0;
-              border-top: 6px solid
-                ${i === steps.length - 1
-                  ? 'transparent'
-                  : (i <= index && theme.active) || theme.inactive};
+              padding: 0 ${i === 0 || i === steps.length - 1 ? '70px' : '140px'} 0 0;
+              border-top: 6px solid ${i <= index ? theme.active : theme.inactive};
             `}
           >
             <div
@@ -35,6 +32,7 @@ const WizardProgress = compose(withTheme)(({ index, steps, setIndex, theme }) =>
                 color: white;
                 position: relative;
                 top: -12px;
+                left: ${i === 0 ? 0 : '70px'};
                 padding: 4px 7px;
                 border-radius: 10px;
                 font-size: 10px;
