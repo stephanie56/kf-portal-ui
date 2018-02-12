@@ -13,16 +13,28 @@ import Login from 'components/Login';
 import SelectRoleForm from 'components/forms/SelectRoleForm';
 import { updateProfile } from 'services/profiles';
 
-const Consent = compose(injectState)(({ state: { loggedInUser }, effects: { setUser } }) => (
-  <div>
-    <h2>Read and consent to our terms and conditions</h2>
-    <textarea
+const Consent = compose(injectState, withTheme)(
+  ({ state: { loggedInUser }, effects: { setUser }, theme }) => (
+    <div
       className={css`
-        width: 715px;
-        min-height: 250px;
-        resize: none;
+        ${theme.column} justify-content: space-between;
+        align-items: center;
       `}
-      value="Lollipop halvah cotton candy marshmallow gingerbread jelly beans topping. Fruitcake
+    >
+      <h3
+        className={css`
+          ${theme.h3} width: 90%;
+        `}
+      >
+        Read and consent to our terms and conditions
+      </h3>
+      <textarea
+        className={css`
+          min-height: 250px;
+          width: 90%;
+          resize: none;
+        `}
+        value="Lollipop halvah cotton candy marshmallow gingerbread jelly beans topping. Fruitcake
             sugar plum tiramisu pie. Sugar plum sweet roll cake chocolate bar lollipop jelly
             beans. Jelly jelly beans icing macaroon tart jujubes lemon drops marzipan. Liquorice
             carrot cake bonbon pie chocolate. Gingerbread oat cake tootsie roll icing. Chocolate
@@ -32,28 +44,38 @@ const Consent = compose(injectState)(({ state: { loggedInUser }, effects: { setU
             brownie chocolate bar tart. Oat cake apple pie soufflé topping. Toffee dessert
             chocolate cotton candy carrot cake topping fruitcake gummi bears. Chocolate cake
             brownie pie cake caramels."
-      readOnly
-    />
-    <p>
-      <input
-        type="checkbox"
-        checked={get(loggedInUser, 'acceptedTerms', false)}
-        onChange={event => {
-          const { email, percentageFilled, ...rest } = loggedInUser;
-          updateProfile({
-            user: {
-              ...rest,
-              acceptedTerms: event.target.checked,
-            },
-          }).then(async profile => {
-            await setUser({ ...profile, email });
-          });
-        }}
+        readOnly
       />
-      I have read and agreed to the Kids First Data Research Portal Term and Conditions
-    </p>
-  </div>
-));
+      <div
+        className={css`
+          border-radius: 10px;
+          background-color: #e5f7fd;
+          border: solid 1px ${theme.active};
+          width: 90%;
+          margin-top: 10px;
+          padding: 5px;
+        `}
+      >
+        <input
+          type="checkbox"
+          checked={get(loggedInUser, 'acceptedTerms', false)}
+          onChange={event => {
+            const { email, percentageFilled, ...rest } = loggedInUser;
+            updateProfile({
+              user: {
+                ...rest,
+                acceptedTerms: event.target.checked,
+              },
+            }).then(async profile => {
+              await setUser({ ...profile, email });
+            });
+          }}
+        />
+        I have read and agreed to the Kids First Data Research Portal Term and Conditions
+      </div>
+    </div>
+  ),
+);
 
 const ButtonsDiv = styled('div')`
   display: flex;
@@ -92,39 +114,39 @@ const JoinContent = compose(withRouter, withTheme)(({ history, theme }) => (
           //renderButtons: () => <div />,
           //canGoBack: false,
           //},
-          {
-            title: 'Basic Info',
-            render: ({ disableNextStep }) => (
-              <div>
-                <h3 className={theme.h3}>A bit about you</h3>
-                <p>
-                  A bit about you Please provide a bit about yourself to help us provide you with a
-                  personalized experience.
-                </p>
-                <SelectRoleForm
-                  onValidateFinish={errors => disableNextStep(!!Object.keys(errors).length)}
-                />
-              </div>
-            ),
-            renderButtons: ({ nextStep, prevStep, nextDisabled, prevDisabled }) => (
-              <ButtonsDiv
-                className={css`
-                  justify-content: flex-end;
-                `}
-              >
-                <div>
-                  <button className={theme.wizardButton} onClick={() => history.push('/')}>
-                    Cancel
-                  </button>
-                  <button className={theme.wizardButton} onClick={nextStep} disabled={nextDisabled}>
-                    Save
-                    <RightIcon />
-                  </button>
-                </div>
-              </ButtonsDiv>
-            ),
-            canGoBack: true,
-          },
+          //{
+          //title: 'Basic Info',
+          //render: ({ disableNextStep }) => (
+          //<div>
+          //<h3 className={theme.h3}>A bit about you</h3>
+          //<p>
+          //Please provide a bit about yourself to help us provide you with a personalized
+          //experience.
+          //</p>
+          //<SelectRoleForm
+          //onValidateFinish={errors => disableNextStep(!!Object.keys(errors).length)}
+          ///>
+          //</div>
+          //),
+          //renderButtons: ({ nextStep, prevStep, nextDisabled, prevDisabled }) => (
+          //<ButtonsDiv
+          //className={css`
+          //justify-content: flex-end;
+          //`}
+          //>
+          //<div>
+          //<button className={theme.wizardButton} onClick={() => history.push('/')}>
+          //Cancel
+          //</button>
+          //<button className={theme.wizardButton} onClick={nextStep} disabled={nextDisabled}>
+          //Save
+          //<RightIcon />
+          //</button>
+          //</div>
+          //</ButtonsDiv>
+          //),
+          //canGoBack: true,
+          //},
           {
             title: 'Consent',
             Component: <Consent />,

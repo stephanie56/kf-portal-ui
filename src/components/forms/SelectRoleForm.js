@@ -9,6 +9,16 @@ import { withRouter } from 'react-router-dom';
 import { ROLES } from 'common/constants';
 import { updateProfile } from 'services/profiles';
 
+import researcherIconPath from 'theme/images/icon-researcher.svg';
+import patientIconPath from 'theme/images/icon-patient.svg';
+import clinicianIconPath from 'theme/images/icon-clinician.svg';
+
+const iconPaths = {
+  researcher: researcherIconPath,
+  patient: patientIconPath,
+  clinician: clinicianIconPath,
+};
+
 const StyledLabel = styled('label')`
   font-weight: 900;
   width: 140px;
@@ -109,8 +119,7 @@ const SelectRoleForm = ({
       <form
         onSubmit={handleSubmit}
         className={css`
-          ${theme.column} height: 230px;
-          justify-content: space-around;
+          ${theme.column} justify-content: space-around;
         `}
       >
         <div className={theme.row}>
@@ -125,7 +134,11 @@ const SelectRoleForm = ({
             {touched.firstName && errors.firstName && <div>{errors.firstName}</div>}
           </div>
         </div>
-        <div className={theme.row}>
+        <div
+          className={css`
+            ${theme.row} margin-top: 10px;
+          `}
+        >
           <StyledLabel>Last name:</StyledLabel>
           <div className={theme.column}>
             <Field
@@ -138,7 +151,11 @@ const SelectRoleForm = ({
           </div>
         </div>
 
-        <div className={theme.row}>
+        <div
+          className={css`
+            ${theme.row} margin-top: 10px;
+          `}
+        >
           <StyledLabel>Email:</StyledLabel>
           <div className={theme.column}>
             <Field
@@ -154,16 +171,42 @@ const SelectRoleForm = ({
         <div className={theme.row}>
           <StyledLabel>Roles:</StyledLabel>
           <div className={theme.column}>
-            <Field component="select" name="roles" onBlur={submitForm}>
-              <option value="" disabled={true}>
-                Please select a role
-              </option>
-              {ROLES.map(role => (
-                <option value={role} key={role}>
-                  {role}
-                </option>
-              ))}
-            </Field>
+            {ROLES.map(({ type, description }) => (
+              <div
+                key={type}
+                className={css`
+                  ${theme.row} border-radius: 10px;
+                  background-color: #e5f7fd;
+                  border: solid 1px ${theme.active};
+                  width: 525px;
+                  padding: 10px;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-top: 10px;
+                `}
+              >
+                <input type="radio" value={type} />
+                <img src={iconPaths[type]} alt={type} style={{ width: '60px' }} />
+                <div
+                  className={css`
+                    padding-left: 10px;
+                  `}
+                >
+                  <label
+                    className={css`
+                      color: ${theme.secondary};
+                      font-weight: bold;
+                      font-family: 'Open Sans';
+                      display: block;
+                      text-transform: capitalize;
+                    `}
+                  >
+                    {type}
+                  </label>
+                  {description}
+                </div>
+              </div>
+            ))}
           </div>
           {touched.roles && errors.roles && <div>{errors.roles}</div>}
         </div>
