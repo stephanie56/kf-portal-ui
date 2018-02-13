@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { injectState } from 'freactal';
 import './App.css';
 import { provideLoggedInUser } from 'stateProviders';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect, withRouter } from 'react-router-dom';
 import { css } from 'react-emotion';
 import { ThemeProvider } from 'emotion-theming';
 
@@ -83,7 +83,18 @@ const render = ({ editing, setEditing, state, effects }) => {
                 </div>
               )}
             />
-            <Route exact path="/" render={() => forceSelectRole(Landing, loggedInUser)} />
+            <Route
+              exact
+              path="/"
+              render={() =>
+                forceSelectRole(
+                  withRouter(({ history }) => (
+                    <Landing onJoinClick={() => history.push('/join')} />
+                  )),
+                  loggedInUser,
+                )
+              }
+            />
           </Switch>
         </div>
       </ThemeProvider>

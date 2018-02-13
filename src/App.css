@@ -1,8 +1,16 @@
 .App {
-  height: 100%;
+  /* height: 100%; */
   font-family: Montserrat;
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
 }
 
 #root {
   height: 100%;
+  position: absolute;
+  left: 0px;
+  right: 0px;
 }
