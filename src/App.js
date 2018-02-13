@@ -13,18 +13,12 @@ import FileRepo from 'components/FileRepo';
 import AuthRedirect from 'components/AuthRedirect';
 import Header from 'components/Header';
 import theme from 'theme/defaultTheme';
+import Landing from 'components/landing';
 
 import Join from 'pageContents/Join';
 import scienceBgPath from 'theme/images/background-science.jpg';
 
 const enhance = compose(injectState);
-
-const LandingContent = () => (
-  <div>
-    <h1 style={{ display: 'flex', justifyContent: 'center' }}>Kids First Data Portal</h1>
-    Pretty picture here 👶🌳🎈
-  </div>
-);
 
 const forceSelectRole = (Component, loggedInUser) => {
   if (loggedInUser && (!loggedInUser.roles || !loggedInUser.roles[0])) {
@@ -89,7 +83,7 @@ const render = ({ editing, setEditing, state, effects }) => {
                 </div>
               )}
             />
-            <Route exact path="/" render={() => forceSelectRole(LandingContent, loggedInUser)} />
+            <Route exact path="/" render={() => forceSelectRole(Landing, loggedInUser)} />
           </Switch>
         </div>
       </ThemeProvider>

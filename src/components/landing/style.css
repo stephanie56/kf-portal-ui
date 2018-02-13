@@ -1,0 +1,23 @@
+.landing {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.landing .accentBar {
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, #90278e, #cc3399 35%, #be1e2d 66%, #f6921e);
+}
+
+.landing .container {
+  width: 800px;
+  max-width: 100%;
+}
