@@ -7,12 +7,7 @@ import { withTheme } from 'emotion-theming';
 
 const WizardProgress = compose(withTheme)(({ index, steps, setIndex, theme }) => (
   <div>
-    <div
-      className={css`
-        display: flex;
-        flex-direction: row;
-      `}
-    >
+    <div className={theme.row}>
       {steps
         .map((step, i) => ({
           ...step,
@@ -32,7 +27,7 @@ const WizardProgress = compose(withTheme)(({ index, steps, setIndex, theme }) =>
                 color: white;
                 position: relative;
                 top: -12px;
-                left: ${i === 0 ? 0 : '70px'};
+                left: ${i === 0 ? '-1px' : '71px'};
                 padding: 4px 7px;
                 border-radius: 10px;
                 font-size: 10px;
@@ -49,9 +44,7 @@ const WizardProgress = compose(withTheme)(({ index, steps, setIndex, theme }) =>
 
     <div
       className={css`
-        display: flex;
-        flex-direction: row;
-        margin-left: -70px;
+        ${theme.row} margin-left: -70px;
       `}
     >
       {steps.map(({ title }, i) => (

@@ -116,6 +116,7 @@ const SelectRoleForm = ({
 }) => {
   return (
     <div>
+      {console.log(values)}
       <form
         onSubmit={handleSubmit}
         className={css`
@@ -185,7 +186,12 @@ const SelectRoleForm = ({
                   margin-top: 10px;
                 `}
               >
-                <input type="radio" value={type} />
+                <Field
+                  type="radio"
+                  value={type}
+                  checked={values.roles.includes(type)}
+                  name="roles"
+                />
                 <img src={iconPaths[type]} alt={type} style={{ width: '60px' }} />
                 <div
                   className={css`
