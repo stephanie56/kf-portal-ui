@@ -1,16 +1,17 @@
 import * as React from 'react';
-import { compose, withState, lifecycle } from 'recompose';
+import { compose, withState } from 'recompose';
 import { injectState } from 'freactal';
 import { css } from 'emotion';
 import { withTheme } from 'emotion-theming';
 
 import Button from 'uikit/Button';
+import ExternalLink from 'uikit/ExternalLink';
 import RightIcon from 'react-icons/lib/fa/angle-right';
 import PencilIcon from 'react-icons/lib/fa/pencil';
 import XIcon from 'react-icons/lib/fa/close';
 import CheckIcon from 'react-icons/lib/fa/check-circle';
 
-import { setSecret, getSecret, deleteSecret } from 'services/secrets';
+import { deleteSecret } from 'services/secrets';
 import CavaticaInput from 'components/UserProfile/CavaticaTokenInput';
 import Gen3Connection from 'components/UserProfile/Gen3Connection';
 import gen3Logo from 'assets/logo-gen3-data-commons.svg';
@@ -143,10 +144,8 @@ const UserIntegrations = ({ state: { integrationTokens }, effects, theme, ...pro
             <td>
               <span className="integrationHeader">Download Controlled Data</span>
               <p>
-                Access and download controlled data by connecting your Kdis First account to{' '}
-                <a href="https://gen3.kids-first.io/" rel="noopener noreferrer" target="_blank">
-                  Gen3
-                </a>.
+                Access and download controlled data by connecting your Kids First account to{' '}
+                <ExternalLink href="https://gen3.kids-first.io/">Gen3</ExternalLink>.
               </p>
             </td>
             <td>
@@ -198,9 +197,7 @@ const UserIntegrations = ({ state: { integrationTokens }, effects, theme, ...pro
               <span className="integrationHeader">Analyze Data</span>
               <p>
                 Analyze data quickly by connecting your Kids First account to{' '}
-                <a href="http://cavatica.org/" rel="noopener noreferrer" target="_blank">
-                  Cavatica
-                </a>.
+                <ExternalLink href="http://cavatica.org/">Cavatica</ExternalLink>.
               </p>
             </td>
             <td>
@@ -225,24 +222,25 @@ const UserIntegrations = ({ state: { integrationTokens }, effects, theme, ...pro
                     },
                   })
                 ) : (
-                    <Button
-                      onClick={() =>
-                        effects.setModal({
-                          title: 'How to Connect to Cavatica',
-                          component: (
-                            <CavaticaInput
-                              onComplete={effects.unsetModal}
-                              onCancel={effects.unsetModal}
-                            />
-                          ),
-                        })
-                      }
-                    >
-                      <span>
-                        Connect<RightIcon />{' '}
-                      </span>
-                    </Button>
-                  )}
+                  <button
+                    css={theme.actionButton}
+                    onClick={() =>
+                      effects.setModal({
+                        title: 'How to Connect to Cavatica',
+                        component: (
+                          <CavaticaInput
+                            onComplete={effects.unsetModal}
+                            onCancel={effects.unsetModal}
+                          />
+                        ),
+                      })
+                    }
+                  >
+                    <span>
+                      Connect<RightIcon />
+                    </span>
+                  </button>
+                )}
               </div>
             </td>
           </tr>
