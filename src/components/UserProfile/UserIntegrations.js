@@ -12,6 +12,7 @@ import CheckIcon from 'react-icons/lib/fa/check-circle';
 
 import { setSecret, getSecret, deleteSecret } from 'services/secrets';
 import CavaticaInput from 'components/UserProfile/CavaticaTokenInput';
+import Gen3Connection from 'components/UserProfile/Gen3Connection';
 import gen3Logo from 'assets/logo-gen3-data-commons.svg';
 import cavaticaLogo from 'assets/logo-cavatica.svg';
 import { CAVATICA, GEN3 } from 'common/constants';
@@ -104,8 +105,10 @@ const cavaticaStatus = ({ theme, cavaticaKey, onEdit, onRemove }) => {
   );
 };
 
-const testMethod = () => {
-  console.log(getUser());
+const isCookieAvailable = (retryCounter) => {
+  console.log(decodeURIComponent(document.cookie));
+  let output = retryCounter > 50 ? true : false;
+  return output;
 };
 
 const UserIntegrations = ({ state: { integrationTokens }, effects, theme, ...props }) => {
@@ -149,13 +152,41 @@ const UserIntegrations = ({ state: { integrationTokens }, effects, theme, ...pro
             <td>
               <div className="integrationCell">
                 {integrationTokens[GEN3] ? (
-                  gen3Status(integrationTokens[GEN3])
+                  gen3Status({
+                    theme,
+                    gen3Key: integrationTokens[GEN3],
+                    onEdit: () =>
+                      effects.setModal({
+                        title: 'How to Connect to Gen3',
+                        component: (
+                          <Gen3Connection
+                            onComplete={effects.unsetModal}
+                            onCancel={effects.unsetModal}
+                          />
+                        ),
+                      }),
+                    onRemove: () => {
+                      deleteSecret({ service: GEN3 });
+                      effects.setIntegrationToken(GEN3, null);
+                    },
+                  })
                 ) : (
-                  <Button onClick={() => testMethod()}>
-                    <span>Connect</span>
-                    <RightIcon className="right" />
-                  </Button>
-                )}
+                    <Button
+                      onClick={() =>
+                        effects.setModal({
+                          title: 'How to Connect to Gen3',
+                          component: (
+                            <Gen3Connection
+                              onComplete={effects.unsetModal}
+                              onCancel={effects.unsetModal}
+                            />
+                          ),
+                        })
+                      }
+                    ><span>Connect</span>
+                      <RightIcon className="right" />
+                    </Button>
+                  )}
               </div>
             </td>
           </tr>
@@ -194,24 +225,24 @@ const UserIntegrations = ({ state: { integrationTokens }, effects, theme, ...pro
                     },
                   })
                 ) : (
-                  <Button
-                    onClick={() =>
-                      effects.setModal({
-                        title: 'How to Connect to Cavatica',
-                        component: (
-                          <CavaticaInput
-                            onComplete={effects.unsetModal}
-                            onCancel={effects.unsetModal}
-                          />
-                        ),
-                      })
-                    }
-                  >
-                    <span>
-                      Connect<RightIcon />{' '}
-                    </span>
-                  </Button>
-                )}
+                    <Button
+                      onClick={() =>
+                        effects.setModal({
+                          title: 'How to Connect to Cavatica',
+                          component: (
+                            <CavaticaInput
+                              onComplete={effects.unsetModal}
+                              onCancel={effects.unsetModal}
+                            />
+                          ),
+                        })
+                      }
+                    >
+                      <span>
+                        Connect<RightIcon />{' '}
+                      </span>
+                    </Button>
+                  )}
               </div>
             </td>
           </tr>
