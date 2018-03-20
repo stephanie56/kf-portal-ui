@@ -100,7 +100,7 @@ const ModalView = ({
         bottom: '0px',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         display: 'block',
-        zIndex: '111',
+        zIndex: '1000',
       },
       content: {
         position: 'relative',
@@ -127,7 +127,7 @@ const ModalView = ({
     {!!title ? <ModalHeader {...{ theme, title, unsetModal, ...props }} /> : null}
     <div
       css={`
-        z-index: 111;
+        z-index: 1000;
       `}
     >
       {component}
