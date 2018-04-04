@@ -80,11 +80,9 @@ export default provideState({
         return tokenKey ? localStorage.getItem(tokenKey) : null;
       }
     },
-    clearIntegrationTokens: (effects) => state => {
-      SERVICES.forEach(service =>
-        localStorage.removeItem(`integration_${service}`)
-      );
-      state.integrationTokens = {};
-    }
+    clearIntegrationTokens: effects => state => {
+      SERVICES.forEach(service => localStorage.removeItem(`integration_${service}`));
+      return { ...state, integrationTokens: {} };
+    },
   },
 });
