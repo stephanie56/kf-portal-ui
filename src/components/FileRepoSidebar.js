@@ -6,7 +6,7 @@ import { injectState } from 'freactal';
 import Button from 'uikit/Button';
 import Heading from 'uikit/Heading';
 import LoadingOnClick from './LoadingOnClick';
-import CavaticaExportWidget from 'components/cavatica/CavaticaExportWidget.js';
+import CavaticaCopyButton from 'components/cavatica/CavaticaCopyButton';
 
 import downloadIcon from '../assets/icon-download-white.svg';
 import PillInputWithButton from '../uikit/PillInputWithButton';
@@ -271,7 +271,7 @@ const FileRepoSidebar = ({ state, projectId, index, style, sqon, effects, theme,
       </div>
       <Divider />
       <Heading>Data Analysis</Heading>
-      <CavaticaExportWidget {...props} />
+      <CavaticaCopyButton {...props} />
     </div>
   );
 };
