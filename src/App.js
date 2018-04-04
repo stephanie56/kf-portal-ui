@@ -22,14 +22,14 @@ import scienceBgPath from 'theme/images/background-science.jpg';
 import loginImage from 'assets/smiling-girl.jpg';
 import joinImage from 'assets/smiling-boy.jpg';
 import logoPath from 'theme/images/logo-kids-first-data-portal.svg';
+import { requireLogin } from './common/injectGlobals';
 
 const Page = ({ Component, backgroundImageUrl, containerStyle, ...props }) => (
   <div
     css={`
       position: relative;
-      min-height: 100vh;
-      overflow-y: hidden;
-      min-width: 1024;
+      height: 100vh;
+      min-width: 1024px;
       background-image: url(${backgroundImageUrl});
       ${containerStyle};
     `}
@@ -41,14 +41,13 @@ const Page = ({ Component, backgroundImageUrl, containerStyle, ...props }) => (
         width: 100%;
         display: flex;
         flex-direction: column;
-        padding-bottom: 120px;
         background-image: linear-gradient(to bottom, #fff 400px, transparent 100%);
       `}
     >
       <Header />
       <Component {...props} />
+      <Footer />
     </div>
-    <Footer />
   </div>
 );
 
@@ -101,16 +100,20 @@ const SideImagePage = ({ Component, sideImage, ...props }) => (
           box-shadow: 0 0 6px 0.1px #bbbbbb;
         `}
       />
+
       <Component {...props} />
     </div>
   </div>
 );
 
 const forceSelectRole = ({ loggedInUser, ...props }) => {
-  if (loggedInUser && (!loggedInUser.roles || !loggedInUser.roles[0])) {
+  if (!loggedInUser && requireLogin) {
+    return <SideImagePage sideImage={loginImage} {...props} Component={LoginPage} />;
+  } else if (loggedInUser && (!loggedInUser.roles || !loggedInUser.roles[0])) {
     return <Redirect to="/join" />;
+  } else {
+    return <Page {...props} />;
   }
-  return <Page {...props} />;
 };
 
 const App = compose(injectState)(({ editing, setEditing, state, effects }) => {
@@ -152,7 +155,6 @@ const App = compose(injectState)(({ editing, setEditing, state, effects }) => {
           render={props =>
             forceSelectRole({
               Component: UserProfile,
-              backgroundImageUrl: scienceBgPath,
               loggedInUser,
               ...props,
             })
