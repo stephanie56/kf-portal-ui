@@ -205,116 +205,130 @@ const FamilyManifestModal = ({
   );
   return (
     <DownloadManifestModal {...{ sqon, index, projectId }}>
-      {({ setWarning }) => (
-        <div>
-          <ModalSubHeader>
-            Select the data types you would like to download for the family members:
-          </ModalSubHeader>
-          {loading ? (
-            spinner
-          ) : (
-            <Query
-              renderError
-              projectId={projectId}
-              name={`dataTypeQuery`}
-              query={`
-                query dataTypes(${dataTypes
-                  .map((dataType, i) => `$sqon${i}: JSON, $sqon${i}family: JSON`)
-                  .join(', ')}) {
-                  file {
-                    ${dataTypes
-                      .map(
-                        (dataType, i) => `
-                        ${dataType.key.replace(
-                          /[^\da-z]/gi,
-                          '',
-                        )}: aggregations(filters: $sqon${i}) {
-                          file_size {
-                            stats {
-                              sum
-                            }
-                          }
-                        }
-                        ${dataType.key.replace(
-                          /[^\da-z]/gi,
-                          '',
-                        )}family: aggregations(filters: $sqon${i}family) {
-                          participants__family__family_members__kf_id {
-                            buckets {
-                              doc_count
-                              key
-                            }
-                          }
-                        }
-                      `,
-                      )
-                      .join('\n')}
+      {({ setWarning }) => {
+        const query = `
+          query dataTypes(${dataTypes
+            .map((dataType, i) => `$sqon${i}: JSON, $sqon${i}family: JSON`)
+            .join(', ')}) {
+            file {
+              ${dataTypes
+                .map(
+                  (dataType, i) => `
+                  ${dataType.key.replace(/[^\da-z]/gi, '')}: aggregations(filters: $sqon${i}) {
+                    file_size {
+                      stats {
+                        sum
+                      }
+                    }
                   }
-                }
-              `}
-              variables={dataTypes.reduce((acc, dataType, i) => {
-                const dataTypeFilters = ids => [
-                  {
-                    op: 'in',
-                    content: { field: 'data_type', value: [dataType.key] },
-                  },
-                  {
-                    op: 'in',
-                    content: { field: 'participants.kf_id', value: ids },
-                  },
-                ];
+                  ${dataType.key.replace(
+                    /[^\da-z]/gi,
+                    '',
+                  )}family: aggregations(filters: $sqon${i}family) {
+                    file_format {
+                      buckets {
+                        doc_count
+                        key
+                      }
+                    }
+                    participants__family__family_members__kf_id {
+                      buckets {
+                        doc_count
+                        key
+                      }
+                    }
+                  }
+                `,
+                )
+                .join('\n')}
+            }
+          }
+        `;
+        const variables = dataTypes.reduce((acc, dataType, i) => {
+          const dataTypeFilters = ids => [
+            {
+              op: 'in',
+              content: { field: 'data_type', value: [dataType.key] },
+            },
+            {
+              op: 'in',
+              content: { field: 'participants.kf_id', value: ids },
+            },
+          ];
 
-                return {
-                  ...acc,
-                  [`sqon${i}family`]: { op: 'and', content: dataTypeFilters(familyMemberIds) },
-                  [`sqon${i}`]: { op: 'and', content: dataTypeFilters(finalFamilyMemberIds) },
-                };
-              }, {})}
-              render={({ data, loading }) => {
-                return loading
-                  ? spinner
-                  : (dataTypes || []).map(bucket => {
-                      const aggs = get(data, `file`);
-                      const familyMembers = get(
-                        aggs,
-                        `${bucket.key.replace(
-                          /[^\da-z]/gi,
-                          '',
-                        )}family.participants__family__family_members__kf_id.buckets`,
-                      );
-                      const familyMembersCount =
-                        familyMembers &&
-                        familyMembers.reduce((sum, bucket) => sum + bucket.doc_count, 0);
-                      console.log('buckets', bucket);
-                      return (
-                        <DataTypeOption
-                          disabled={isDisabled}
-                          key={bucket.key}
-                          bucket={bucket}
-                          values={values}
-                          familyMembers={familyMembersCount}
-                          fileSize={get(
-                            aggs,
-                            `${bucket.key.replace(/[^\da-z]/gi, '')}.file_size.stats.sum`,
-                          )}
-                        />
-                      );
-                    });
+          return {
+            ...acc,
+            [`sqon${i}family`]: { op: 'and', content: dataTypeFilters(familyMemberIds) },
+            [`sqon${i}`]: { op: 'and', content: dataTypeFilters(finalFamilyMemberIds) },
+          };
+        }, {});
+        return (
+          <div>
+            <ModalSubHeader>
+              Select the data types you would like to download for the family members:
+            </ModalSubHeader>
+            {loading ? (
+              spinner
+            ) : (
+              <Query
+                renderError
+                projectId={projectId}
+                name={`dataTypeQuery`}
+                query={query}
+                variables={variables}
+                render={({ data, loading }) => {
+                  return loading
+                    ? spinner
+                    : (dataTypes || []).map(bucket => {
+                        const aggs = get(data, `file`);
+                        const familyMembers = get(
+                          aggs,
+                          `${bucket.key.replace(
+                            /[^\da-z]/gi,
+                            '',
+                          )}family.participants__family__family_members__kf_id.buckets`,
+                        );
+                        const familyMembersCount =
+                          familyMembers &&
+                          familyMembers.reduce((sum, bucket) => sum + bucket.doc_count, 0);
+                        const fileFormats = get(
+                          aggs,
+                          `${bucket.key.replace(/[^\da-z]/gi, '')}family.file_format.buckets`,
+                        );
+                        const filesCount =
+                          fileFormats &&
+                          fileFormats.reduce((sum, bucket) => sum + bucket.doc_count, 0);
+                        return (
+                          <DataTypeOption
+                            disabled={isDisabled}
+                            key={bucket.key}
+                            bucket={bucket}
+                            filesCount={filesCount}
+                            values={values}
+                            familyMembers={familyMembersCount}
+                            fileSize={get(
+                              aggs,
+                              `${bucket.key.replace(/[^\da-z]/gi, '')}.file_size.stats.sum`,
+                            )}
+                          />
+                        );
+                      });
+                }}
+              />
+            )}
+            <DownloadManifestModalFooter
+              {...{
+                sqon: sqonForDownload({ sqon, values, familyMemberIds }),
+                onManifestGenerated: () => setIsDisabled(true),
+                projectId,
+                setWarning,
+                onDownloadClick: submitForm,
+                downloadLoading: isSubmitting,
               }}
             />
-          )}
-          <DownloadManifestModalFooter
-            {...{
-              sqon: sqonForDownload({ sqon, values, familyMemberIds }),
-              onManifestGenerated: () => setIsDisabled(true),
-              projectId,
-              setWarning,
-              onDownloadClick: submitForm,
-              downloadLoading: isSubmitting,
-            }}
-          />
-        </div>
-      )}
+          </div>
+        );
+      }}
     </DownloadManifestModal>
   );
 };

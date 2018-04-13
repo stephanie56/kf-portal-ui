@@ -2,7 +2,7 @@ import React from 'react';
 import { Field } from 'formik';
 import filesize from 'filesize';
 
-const DataTypeOption = ({ bucket, values, fileSize, familyMembers, disabled }) => {
+const DataTypeOption = ({ bucket, values, fileSize, familyMembers, disabled, filesCount }) => {
   return (
     <label
       css={`
@@ -39,7 +39,7 @@ const DataTypeOption = ({ bucket, values, fileSize, familyMembers, disabled }) =
             vertical-align: middle;
           `}
         >
-          {bucket.doc_count} Files
+          {filesCount} Files
         </span>
         <div
           css={`
