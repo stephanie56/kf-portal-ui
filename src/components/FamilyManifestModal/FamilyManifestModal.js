@@ -242,6 +242,7 @@ const FamilyManifestModal = ({
                           participants__family__family_members__kf_id {
                             buckets {
                               doc_count
+                              key
                             }
                           }
                         }
@@ -274,19 +275,24 @@ const FamilyManifestModal = ({
                   ? spinner
                   : (dataTypes || []).map(bucket => {
                       const aggs = get(data, `file`);
+                      const familyMembers = get(
+                        aggs,
+                        `${bucket.key.replace(
+                          /[^\da-z]/gi,
+                          '',
+                        )}family.participants__family__family_members__kf_id.buckets`,
+                      );
+                      const familyMembersCount =
+                        familyMembers &&
+                        familyMembers.reduce((sum, bucket) => sum + bucket.doc_count, 0);
+                      console.log('buckets', bucket);
                       return (
                         <DataTypeOption
                           disabled={isDisabled}
                           key={bucket.key}
                           bucket={bucket}
                           values={values}
-                          familyMembers={get(
-                            aggs,
-                            `${bucket.key.replace(
-                              /[^\da-z]/gi,
-                              '',
-                            )}family.participants__family__family_members__kf_id.buckets.length`,
-                          )}
+                          familyMembers={familyMembersCount}
                           fileSize={get(
                             aggs,
                             `${bucket.key.replace(/[^\da-z]/gi, '')}.file_size.stats.sum`,
