@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import { injectState } from 'freactal';
-import { compose, withState, withPropsOnChange, withHandlers } from 'recompose';
+import { compose, withState, withPropsOnChange, withHandlers, withProps } from 'recompose';
 import { css } from 'react-emotion';
 import { withTheme } from 'emotion-theming';
 import { trackPageView } from 'services/analyticsTracking';
@@ -69,7 +69,7 @@ const WizardProgress = compose(withTheme)(({ index, steps, setIndex, theme }) =>
   </div>
 ));
 
-export default compose(
+export const enhance = compose(
   injectState,
   withTheme,
   withRouter,
@@ -87,8 +87,13 @@ export default compose(
       currentStep: steps[index] || { title: 'no step', Component: '--' },
     };
   }),
-)(
-  ({
+  withProps(props => ({
+    wizardProps: props,
+  })),
+);
+
+export const WizardDisplay = ({
+  wizardProps: {
     steps,
     state,
     index,
@@ -101,7 +106,9 @@ export default compose(
     theme,
     customStepMessage,
     setCustomStepMessage,
-  }: {
+  },
+}: {
+  wizardProps: {
     steps: Array<{
       title: string,
       canGoBack: boolean,
@@ -120,29 +127,31 @@ export default compose(
     setNextDisabled: Function,
     customStepMessage: string,
     setCustomStepMessage: Function,
-  }) => (
-    <div className={theme.column}>
-      <div
-        className={css`
-          display: flex;
-          justify-content: center;
-          border-bottom: 1px solid ${theme.greyScale4};
-          min-height: 60px;
-        `}
-      >
-        <WizardProgress setIndex={setIndex} index={index} steps={steps} />
-      </div>
-      {currentStep.render
-        ? currentStep.render({
-            disableNextStep: setNextDisabled,
-            customStepMessage,
-            setCustomStepMessage,
-            nextStep,
-            prevStep,
-            nextDisabled,
-            prevDisabled: index - 1 < 0 || !steps[index - 1].canGoBack,
-          })
-        : currentStep.Component}
+  },
+}) => (
+  <div className={theme.column}>
+    <div
+      className={css`
+        display: flex;
+        justify-content: center;
+        border-bottom: 1px solid ${theme.greyScale4};
+        min-height: 60px;
+      `}
+    >
+      <WizardProgress setIndex={setIndex} index={index} steps={steps} />
     </div>
-  ),
+    {currentStep.render
+      ? currentStep.render({
+          disableNextStep: setNextDisabled,
+          customStepMessage,
+          setCustomStepMessage,
+          nextStep,
+          prevStep,
+          nextDisabled,
+          prevDisabled: index - 1 < 0 || !steps[index - 1].canGoBack,
+        })
+      : currentStep.Component}
+  </div>
 );
+
+export default enhance(WizardDisplay);

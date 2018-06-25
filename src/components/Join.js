@@ -11,11 +11,15 @@ import SelectRoleForm from 'components/forms/SelectRoleForm';
 import ConsentForm from 'components/forms/ConsentForm';
 import { withApi } from 'services/api';
 import { startAnalyticsTiming, TRACKING_EVENTS } from 'services/analyticsTracking';
+import RightIcon from 'react-icons/lib/fa/angle-right';
+import LeftIcon from 'react-icons/lib/fa/angle-left';
 
 import { ExternalLink } from 'uikit/Core';
 import Column from 'uikit/Column';
 import Wizard from 'uikit/Wizard';
 import FlashMessage from 'uikit/FlashMessage';
+import DeleteButton from 'components/loginButtons/DeleteButton';
+import Row from 'uikit/Row';
 
 export const ButtonsDiv = styled('div')`
   display: flex;
@@ -44,86 +48,107 @@ const JoinContent = compose(
   }),
 )(({ state: { loggedInUser }, effects: { setToast, closeToast }, history, theme, api }) => (
   <JoinContainer>
-    <div className={`${theme.card} ${theme.column} `}>
-      <h2 className={theme.h2}>
-        <Trans>Join Kids First Data Resource Portal</Trans>
-      </h2>
-      <FlashMessage mb={4}>
-        <Trans>
-          We're currently in <b>beta phase</b> for the Kids First DRP. We're looking for your input
-          so we can build a data portal that better meets your needs. Please send us your feedback
-          or any other issues you experience at:{' '}
-          <ExternalLink bare primary bold href="mailto:support@kidsfirst.org">
-            support@kidsfirst.org
-          </ExternalLink>
-        </Trans>
-      </FlashMessage>
-      <Wizard
-        steps={[
-          {
-            title: 'Connect',
-            render: ({ nextStep }) => (
-              <div className={theme.column}>
-                <h3 className={theme.h3}>
-                  <Trans i18nKey="join.wizard.socialSelect">
-                    Select a way to connect to the Kids First Data Resource Portal
-                  </Trans>
-                </h3>
-                <p>
-                  <Trans i18nKey="join.wizard.dataConfidentiality">
-                    Your information will be kept confidential and secure and is not shared with any
-                    of these providers.
-                  </Trans>
-                </p>
-                <Login
-                  shouldNotRedirect={true}
-                  onFinish={user => {
-                    if (!user.roles || user.roles.length === 0 || !user.acceptedTerms) {
-                      nextStep();
-                    } else {
-                      history.push('/dashboard');
-                    }
-                  }}
+    <Column className={`${theme.card}`}>
+      <Column scrollY>
+        <h2 className={theme.h2}>
+          <Trans>Join Kids First Data Resource Portal</Trans>
+        </h2>
+        <FlashMessage mb={4}>
+          <Trans>
+            We're currently in <b>beta phase</b> for the Kids First DRP. We're looking for your
+            input so we can build a data portal that better meets your needs. Please send us your
+            feedback or any other issues you experience at:{' '}
+            <ExternalLink bare primary bold href="mailto:support@kidsfirst.org">
+              support@kidsfirst.org
+            </ExternalLink>
+          </Trans>
+        </FlashMessage>
+        <Wizard
+          steps={[
+            {
+              title: 'Connect',
+              render: ({ nextStep }) => (
+                <div className={theme.column}>
+                  <h3 className={theme.h3}>
+                    <Trans i18nKey="join.wizard.socialSelect">
+                      Select a way to connect to the Kids First Data Resource Portal
+                    </Trans>
+                  </h3>
+                  <p>
+                    <Trans i18nKey="join.wizard.dataConfidentiality">
+                      Your information will be kept confidential and secure and is not shared with
+                      any of these providers.
+                    </Trans>
+                  </p>
+                  <Login
+                    shouldNotRedirect={true}
+                    onFinish={user => {
+                      if (!user.roles || user.roles.length === 0 || !user.acceptedTerms) {
+                        nextStep();
+                      } else {
+                        history.push('/dashboard');
+                      }
+                    }}
+                  />
+                </div>
+              ),
+              renderButtons: () => <div />,
+              canGoBack: true,
+            },
+            {
+              title: 'Basic Info',
+              render: ({ disableNextStep, nextStep, prevStep, nextDisabled, prevDisabled }) => (
+                <div className={theme.column}>
+                  <h3 className={theme.h3}>
+                    <Trans i18nKey="join.wizard.basicInfoHeader">Tell us about yourself</Trans>
+                  </h3>
+                  <p>
+                    <Trans i18nKey="join.wizard.basicInfoInstructions">
+                      Please provide information about yourself to help us personalize your
+                      experience.
+                    </Trans>
+                  </p>
+                  <SelectRoleForm
+                    onValidateFinish={errors => disableNextStep(!!Object.keys(errors).length)}
+                    onValidChange={isValid => disableNextStep(!isValid)}
+                    {...{ nextStep, nextDisabled, prevDisabled, api }}
+                  />
+                </div>
+              ),
+              canGoBack: true,
+            },
+            {
+              title: 'Consent',
+              render: ({ disableNextStep, nextStep, prevStep, nextDisabled, prevDisabled }) => (
+                <ConsentForm
+                  {...{ disableNextStep, nextStep, prevStep, nextDisabled, prevDisabled, history }}
                 />
-              </div>
-            ),
-            renderButtons: () => <div />,
-            canGoBack: true,
-          },
-          {
-            title: 'Basic Info',
-            render: ({ disableNextStep, nextStep, prevStep, nextDisabled, prevDisabled }) => (
-              <div className={theme.column}>
-                <h3 className={theme.h3}>
-                  <Trans i18nKey="join.wizard.basicInfoHeader">Tell us about yourself</Trans>
-                </h3>
-                <p>
-                  <Trans i18nKey="join.wizard.basicInfoInstructions">
-                    Please provide information about yourself to help us personalize your
-                    experience.
-                  </Trans>
-                </p>
-                <SelectRoleForm
-                  onValidateFinish={errors => disableNextStep(!!Object.keys(errors).length)}
-                  onValidChange={isValid => disableNextStep(!isValid)}
-                  {...{ nextStep, nextDisabled, prevDisabled, api }}
-                />
-              </div>
-            ),
-            canGoBack: true,
-          },
-          {
-            title: 'Consent',
-            render: ({ disableNextStep, nextStep, prevStep, nextDisabled, prevDisabled }) => (
-              <ConsentForm
-                {...{ disableNextStep, nextStep, prevStep, nextDisabled, prevDisabled, history }}
-              />
-            ),
-            canGoBack: false,
-          },
-        ]}
-      />
-    </div>
+              ),
+              canGoBack: false,
+            },
+          ]}
+        />
+      </Column>
+      <ButtonsDiv>
+        <DeleteButton className={theme.wizardButton}>
+          <LeftIcon />
+          Back
+        </DeleteButton>
+        <Row>
+          <DeleteButton
+            css={`
+              ${theme.wizardButton} font-weight: 300;
+            `}
+          >
+            Cancel
+          </DeleteButton>
+          <button className={theme.actionButton} onClick={() => {}}>
+            Next
+            <RightIcon />
+          </button>
+        </Row>
+      </ButtonsDiv>
+    </Column>
   </JoinContainer>
 ));
 export default JoinContent;

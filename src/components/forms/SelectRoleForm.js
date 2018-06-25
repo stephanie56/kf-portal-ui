@@ -25,7 +25,6 @@ import CheckboxBubble from 'uikit/CheckboxBubble';
 
 const SelectRoleForm = styled('form')`
   justify-content: space-around;
-  overflow-y: scroll;
 `;
 
 const FieldInput = styled(Field)`
@@ -283,34 +282,36 @@ export default enhance(
             </CheckboxLabel>
           </Row>
         </SelectRoleForm>
-
-        <ButtonsDiv>
-          <DeleteButton className={theme.wizardButton} disabled={prevDisabled}>
-            <LeftIcon />
-            Back
-          </DeleteButton>
-          <Row>
-            <DeleteButton
-              css={`
-                ${theme.wizardButton} font-weight: 300;
-              `}
-            >
-              Cancel
-            </DeleteButton>
-            <button
-              className={theme.actionButton}
-              onClick={() => {
-                submitForm();
-                nextStep();
-              }}
-              disabled={nextDisabled}
-            >
-              Next
-              <RightIcon />
-            </button>
-          </Row>
-        </ButtonsDiv>
       </Column>
     );
   },
 );
+
+{
+  /* <ButtonsDiv>
+  <DeleteButton className={theme.wizardButton} disabled={prevDisabled}>
+    <LeftIcon />
+    Back
+  </DeleteButton>
+  <Row>
+    <DeleteButton
+      css={`
+        ${theme.wizardButton} font-weight: 300;
+      `}
+    >
+      Cancel
+    </DeleteButton>
+    <button
+      className={theme.actionButton}
+      onClick={() => {
+        submitForm();
+        nextStep();
+      }}
+      disabled={nextDisabled}
+    >
+      Next
+      <RightIcon />
+    </button>
+  </Row>
+</ButtonsDiv> */
+}
