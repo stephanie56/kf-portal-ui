@@ -6,7 +6,7 @@ import { isObject } from 'lodash';
 import { Trans } from 'react-i18next';
 import FilterIcon from 'react-icons/lib/fa/filter';
 
-import { Arranger, CurrentSQON, Table, DetectNewVersion } from '@arranger/components/dist/Arranger';
+import { Arranger, CurrentSQON, Table } from '@arranger/components/dist/Arranger';
 import { replaceSQON } from '@arranger/components/dist/SQONView/utils';
 
 import SQONURL from 'components/SQONURL';
@@ -91,115 +91,112 @@ const FileRepo = compose(injectState, withTheme, withApi)(
                       })
                     : url.sqon;
                   return (
-                    <React.Fragment>
-                      <DetectNewVersion {...props} />
-                      <ArrangerContainer>
-                        <AggregationSidebar
-                          {...{ ...props, ...url, translateSQONValue }}
-                          trackFileRepoInteraction={trackFileRepoInteraction}
-                        />
-                        <TableContainer>
-                          <Row mb={url.sqon ? 3 : 0}>
-                            <CurrentSQON
-                              {...props}
-                              {...url}
-                              {...{ translateSQONValue }}
-                              onClear={() => {
-                                trackFileRepoInteraction({
-                                  category: TRACKING_EVENTS.categories.fileRepo.dataTable,
-                                  action: TRACKING_EVENTS.actions.query.clear,
-                                });
-                              }}
-                            />
-                            {url.sqon &&
-                              Object.keys(url.sqon).length > 0 && (
-                                <FileRepoStatsQuery
-                                  {...props}
-                                  {...url}
-                                  render={({ data: stats, loading: disabled }) => (
-                                    <QuerySharingContainer>
-                                      <ShareQuery
-                                        api={props.api}
-                                        {...url}
-                                        {...{ stats, disabled }}
-                                        css={`
-                                          flex: 1;
-                                        `}
-                                      />
-                                      <SaveQuery
-                                        api={props.api}
-                                        {...url}
-                                        {...{ stats, disabled }}
-                                        css={`
-                                          flex: 1;
-                                        `}
-                                      />
-                                    </QuerySharingContainer>
-                                  )}
-                                />
-                              )}
-                          </Row>
-                          <FileRepoStats
+                    <ArrangerContainer>
+                      <AggregationSidebar
+                        {...{ ...props, ...url, translateSQONValue }}
+                        trackFileRepoInteraction={trackFileRepoInteraction}
+                      />
+                      <TableContainer>
+                        <Row mb={url.sqon ? 3 : 0}>
+                          <CurrentSQON
                             {...props}
-                            sqon={selectionSQON}
-                            css={`
-                              flex: none;
-                            `}
+                            {...url}
+                            {...{ translateSQONValue }}
+                            onClear={() => {
+                              trackFileRepoInteraction({
+                                category: TRACKING_EVENTS.categories.fileRepo.dataTable,
+                                action: TRACKING_EVENTS.actions.query.clear,
+                              });
+                            }}
                           />
-                          <TableWrapper>
-                            <Table
-                              {...props}
-                              {...url}
-                              customTypes={customTableTypes}
-                              InputComponent={props => (
-                                <FilterInput {...props} LeftIcon={FilterIcon} />
-                              )}
-                              customColumns={customTableColumns({
-                                theme,
-                                userProjectIds,
-                                loadingGen3User,
-                              })}
-                              filterInputPlaceholder={'Filter table'}
-                              columnDropdownText="Columns"
-                              fieldTypesForFilter={['text', 'keyword', 'id']}
-                              maxPagesOptions={5}
-                              onFilterChange={val => {
-                                if (val !== '') {
-                                  trackFileRepoInteraction({
-                                    category: TRACKING_EVENTS.categories.fileRepo.dataTable,
-                                    action: TRACKING_EVENTS.actions.filter,
-                                    label: val,
-                                  });
-                                }
-                                if (props.onFilterChange) {
-                                  props.onFilterChange(val);
-                                }
-                              }}
-                              onTableExport={({ files }) => {
+                          {url.sqon &&
+                            Object.keys(url.sqon).length > 0 && (
+                              <FileRepoStatsQuery
+                                {...props}
+                                {...url}
+                                render={({ data: stats, loading: disabled }) => (
+                                  <QuerySharingContainer>
+                                    <ShareQuery
+                                      api={props.api}
+                                      {...url}
+                                      {...{ stats, disabled }}
+                                      css={`
+                                        flex: 1;
+                                      `}
+                                    />
+                                    <SaveQuery
+                                      api={props.api}
+                                      {...url}
+                                      {...{ stats, disabled }}
+                                      css={`
+                                        flex: 1;
+                                      `}
+                                    />
+                                  </QuerySharingContainer>
+                                )}
+                              />
+                            )}
+                        </Row>
+                        <FileRepoStats
+                          {...props}
+                          sqon={selectionSQON}
+                          css={`
+                            flex: none;
+                          `}
+                        />
+                        <TableWrapper>
+                          <Table
+                            {...props}
+                            {...url}
+                            customTypes={customTableTypes}
+                            InputComponent={props => (
+                              <FilterInput {...props} LeftIcon={FilterIcon} />
+                            )}
+                            customColumns={customTableColumns({
+                              theme,
+                              userProjectIds,
+                              loadingGen3User,
+                            })}
+                            filterInputPlaceholder={'Filter table'}
+                            columnDropdownText="Columns"
+                            fieldTypesForFilter={['text', 'keyword', 'id']}
+                            maxPagesOptions={5}
+                            onFilterChange={val => {
+                              if (val !== '') {
                                 trackFileRepoInteraction({
                                   category: TRACKING_EVENTS.categories.fileRepo.dataTable,
-                                  action: 'Export TSV',
-                                  label: files,
+                                  action: TRACKING_EVENTS.actions.filter,
+                                  label: val,
                                 });
-                              }}
-                              exportTSVText={
-                                <React.Fragment>
-                                  <DownloadIcon
-                                    fill={theme.greyScale3}
-                                    width={12}
-                                    css={`
-                                      margin-right: 9px;
-                                    `}
-                                  />
-                                  <Trans>Export TSV</Trans>
-                                </React.Fragment>
                               }
-                            />
-                          </TableWrapper>
-                        </TableContainer>
-                        <FileRepoSidebar {...props} sqon={selectionSQON} />
-                      </ArrangerContainer>
-                    </React.Fragment>
+                              if (props.onFilterChange) {
+                                props.onFilterChange(val);
+                              }
+                            }}
+                            onTableExport={({ files }) => {
+                              trackFileRepoInteraction({
+                                category: TRACKING_EVENTS.categories.fileRepo.dataTable,
+                                action: 'Export TSV',
+                                label: files,
+                              });
+                            }}
+                            exportTSVText={
+                              <React.Fragment>
+                                <DownloadIcon
+                                  fill={theme.greyScale3}
+                                  width={12}
+                                  css={`
+                                    margin-right: 9px;
+                                  `}
+                                />
+                                <Trans>Export TSV</Trans>
+                              </React.Fragment>
+                            }
+                          />
+                        </TableWrapper>
+                      </TableContainer>
+                      <FileRepoSidebar {...props} sqon={selectionSQON} />
+                    </ArrangerContainer>
                   );
                 }}
               />
